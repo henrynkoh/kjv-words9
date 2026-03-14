@@ -3,6 +3,10 @@
 :root {
   --background: #f0f4ff;
   --foreground: #1a1a2e;
+  --accent: #2563eb;
+  --accent-soft: #dbeafe;
+  --gradient-from: #1e3a8a;
+  --gradient-to: #7c3aed;
 }
 
 @theme inline {
@@ -16,11 +20,30 @@
   :root {
     --background: #0a0a1a;
     --foreground: #e8e8f0;
+    --accent-soft: #1e3a8a;
+    --gradient-from: #3b82f6;
+    --gradient-to: #a78bfa;
   }
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 1rem;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+@media (prefers-color-scheme: dark) {
+  .scrollbar-thin {
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  }
 }

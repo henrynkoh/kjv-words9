@@ -34,7 +34,16 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000). Use the topic list to open a category and read KJV verses with Korean summaries.
+
+## Docs
+
+| Doc | Description |
+|-----|-------------|
+| [**Quick Start**](docs/QUICKSTART.md) | Get running in under 2 minutes |
+| [**Manual**](docs/MANUAL.md) | Full user manual — topics, pages, data |
+| [**Tutorial**](docs/TUTORIAL.md) | Step-by-step from zero to first topic |
+| [**Ads**](docs/ADS.md) | Ready-made copy for Facebook, Instagram, Threads, Blogger, Naver Blog, Tistory, WordPress, Newsletter, Email |
 
 ## Stack
 
