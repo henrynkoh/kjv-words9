@@ -25,42 +25,52 @@ const FIXED_NAV = [
   { id: "footer", label: "Footer" },
 ];
 
+const AUDIENCES = ["believers", "seekers", "new believers", "mature", "mixed", "children"] as const;
+const SITUATIONS = ["evangelism", "teaching", "comfort", "correction", "devotion", "worship", "counsel"] as const;
+const KNOWLEDGE_LEVELS = ["any", "beginner", "moderate", "deeper"] as const;
+
 const FEATURES = [
   {
     icon: Layers,
     title: "By topic",
     desc: "8 categories from Creation & Redemption to Daily Walk.",
     color: "from-violet-500 to-purple-600",
+    sectionId: "topics",
   },
   {
     icon: Users,
     title: "By audience",
     desc: "Pick verses for believers, seekers, new believers, mature, mixed, or children.",
     color: "from-cyan-500 to-blue-600",
+    sectionId: "by-audience",
   },
   {
     icon: Target,
     title: "By situation",
     desc: "Evangelism, teaching, comfort, correction, devotion, worship, or counsel.",
     color: "from-amber-500 to-orange-600",
+    sectionId: "by-situation",
   },
   {
     icon: BookMarked,
     title: "By knowledge level",
     desc: "Any, beginner, moderate, or deeper Bible knowledge.",
     color: "from-emerald-500 to-teal-600",
+    sectionId: "by-knowledge-level",
   },
   {
     icon: Globe,
     title: "KJV + Korean",
     desc: "Each verse has a Korean summary for bilingual sharing.",
     color: "from-rose-500 to-pink-600",
+    sectionId: "kjv-korean",
   },
   {
     icon: Heart,
     title: "Free & simple",
     desc: "No sign-up. Use for study, teaching, or spreading words of truth.",
     color: "from-indigo-500 to-violet-600",
+    sectionId: "about",
   },
 ];
 
@@ -115,7 +125,13 @@ export default function LandingPage({ topics }: Props) {
     ...FIXED_NAV.slice(0, 2),
     { id: "topics", label: "Topics" },
     ...topics.map((t) => ({ id: t.id, label: t.title })),
-    ...FIXED_NAV.slice(2),
+    { id: "features", label: "Features & Functions" },
+    { id: "by-audience", label: "By audience" },
+    { id: "by-situation", label: "By situation" },
+    { id: "by-knowledge-level", label: "By knowledge level" },
+    { id: "kjv-korean", label: "KJV + Korean" },
+    { id: "verse-sample", label: "Verse sample" },
+    { id: "footer", label: "Footer" },
   ];
 
   return (
@@ -315,9 +331,10 @@ export default function LandingPage({ topics }: Props) {
           </p>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl">
             {FEATURES.map((f) => (
-              <div
+              <a
                 key={f.title}
-                className="flex gap-4 rounded-2xl border border-foreground/10 bg-background p-5 hover:border-foreground/20 hover:shadow-md transition-all duration-200"
+                href={`#${f.sectionId}`}
+                className="flex gap-4 rounded-2xl border border-foreground/10 bg-background p-5 hover:border-foreground/20 hover:shadow-md transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/50"
               >
                 <div
                   className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${f.color} text-white shadow`}
@@ -328,12 +345,177 @@ export default function LandingPage({ topics }: Props) {
                   <h3 className="font-semibold text-foreground">{f.title}</h3>
                   <p className="mt-1 text-sm text-foreground/70">{f.desc}</p>
                 </div>
-              </div>
+              </a>
             ))}
           </div>
         </section>
 
-        {/* Verse sample */}
+        {/* By audience — all related content */}
+        <section
+          id="by-audience"
+          ref={setRef("by-audience")}
+          className="px-6 sm:px-10 py-16 bg-foreground/[0.04] scroll-mt-24"
+        >
+          <h2 className="text-2xl font-bold text-foreground mb-2 flex items-center gap-2">
+            <Users className="h-7 w-7 text-[var(--accent)]" />
+            By audience
+          </h2>
+          <p className="text-foreground/70 mb-8 max-w-2xl">
+            Topics and verses by who you&apos;re speaking to. Click a topic to see all verses.
+          </p>
+          <div className="space-y-8">
+            {AUDIENCES.map((audience) => {
+              const matching = topics.filter((t) =>
+                t.audienceSuggestions?.some((a) => a === audience)
+              );
+              if (matching.length === 0) return null;
+              return (
+                <div key={audience} className="rounded-xl border border-foreground/10 bg-background p-5">
+                  <h3 className="font-semibold text-foreground capitalize">{audience.replace(/-/g, " ")}</h3>
+                  <ul className="mt-3 space-y-2">
+                    {matching.map((t) => (
+                      <li key={t.id}>
+                        <Link
+                          href={`/topic/${t.id}`}
+                          className="text-foreground/85 hover:underline flex items-center gap-2"
+                        >
+                          {t.title}
+                          <span className="text-xs text-foreground/55">({t.verses.length} verses)</span>
+                          <ChevronRight className="h-3 w-3" />
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* By situation — all related content */}
+        <section
+          id="by-situation"
+          ref={setRef("by-situation")}
+          className="px-6 sm:px-10 py-16 scroll-mt-24"
+        >
+          <h2 className="text-2xl font-bold text-foreground mb-2 flex items-center gap-2">
+            <Target className="h-7 w-7 text-[var(--accent)]" />
+            By situation
+          </h2>
+          <p className="text-foreground/70 mb-8 max-w-2xl">
+            Topics and verses by context: evangelism, teaching, comfort, and more.
+          </p>
+          <div className="space-y-8">
+            {SITUATIONS.map((situation) => {
+              const matching = topics.filter((t) =>
+                t.situationSuggestions?.some((s) => s === situation)
+              );
+              if (matching.length === 0) return null;
+              return (
+                <div key={situation} className="rounded-xl border border-foreground/10 bg-background p-5">
+                  <h3 className="font-semibold text-foreground capitalize">{situation}</h3>
+                  <ul className="mt-3 space-y-2">
+                    {matching.map((t) => (
+                      <li key={t.id}>
+                        <Link
+                          href={`/topic/${t.id}`}
+                          className="text-foreground/85 hover:underline flex items-center gap-2"
+                        >
+                          {t.title}
+                          <span className="text-xs text-foreground/55">({t.verses.length} verses)</span>
+                          <ChevronRight className="h-3 w-3" />
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* By knowledge level — all related content */}
+        <section
+          id="by-knowledge-level"
+          ref={setRef("by-knowledge-level")}
+          className="px-6 sm:px-10 py-16 bg-foreground/[0.04] scroll-mt-24"
+        >
+          <h2 className="text-2xl font-bold text-foreground mb-2 flex items-center gap-2">
+            <BookMarked className="h-7 w-7 text-[var(--accent)]" />
+            By knowledge level
+          </h2>
+          <p className="text-foreground/70 mb-8 max-w-2xl">
+            Topics by level of Bible knowledge. Click a topic to see all verses.
+          </p>
+          <div className="space-y-8">
+            {KNOWLEDGE_LEVELS.map((level) => {
+              const matching = topics.filter((t) => t.knowledgeLevel === level);
+              if (matching.length === 0) return null;
+              return (
+                <div key={level} className="rounded-xl border border-foreground/10 bg-background p-5">
+                  <h3 className="font-semibold text-foreground capitalize">{level}</h3>
+                  <ul className="mt-3 space-y-2">
+                    {matching.map((t) => (
+                      <li key={t.id}>
+                        <Link
+                          href={`/topic/${t.id}`}
+                          className="text-foreground/85 hover:underline flex items-center gap-2"
+                        >
+                          {t.title}
+                          <span className="text-xs text-foreground/55">({t.verses.length} verses)</span>
+                          <ChevronRight className="h-3 w-3" />
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* KJV + Korean — verse format examples (all related content) */}
+        <section
+          id="kjv-korean"
+          ref={setRef("kjv-korean")}
+          className="px-6 sm:px-10 py-16 scroll-mt-24"
+        >
+          <h2 className="text-2xl font-bold text-foreground mb-2 flex items-center gap-2">
+            <Globe className="h-7 w-7 text-[var(--accent)]" />
+            KJV + Korean
+          </h2>
+          <p className="text-foreground/70 mb-6 max-w-2xl">
+            Every verse appears with theme, Korean summary, reference, and full KJV text. Examples from different topics:
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2 max-w-5xl">
+            {topics.slice(0, 6).map((topic, i) =>
+              topic.verses[0] ? (
+                <div
+                  key={topic.id}
+                  className={`rounded-xl border-2 bg-gradient-to-br ${TOPIC_GRADIENTS[i % TOPIC_GRADIENTS.length]} p-4`}
+                >
+                  <p className="text-xs font-medium text-foreground/70">{topic.verses[0].theme}</p>
+                  <p className="mt-1 text-sm text-foreground/80" lang="ko">
+                    {topic.verses[0].korean}
+                  </p>
+                  <p className="mt-1 text-xs font-mono text-foreground/60">{topic.verses[0].ref}</p>
+                  <blockquote className="mt-2 pl-3 border-l-2 border-foreground/20 text-foreground/90 text-sm italic">
+                    &ldquo;{topic.verses[0].text}&rdquo;
+                  </blockquote>
+                  <Link
+                    href={`/topic/${topic.id}`}
+                    className="mt-2 inline-flex items-center gap-1 text-xs text-foreground/70 hover:underline"
+                  >
+                    All in {topic.title}
+                    <ChevronRight className="h-3 w-3" />
+                  </Link>
+                </div>
+              ) : null
+            )}
+          </div>
+        </section>
+
+        {/* Verse sample (kept for nav) */}
         <section
           id="verse-sample"
           ref={setRef("verse-sample")}
@@ -344,8 +526,7 @@ export default function LandingPage({ topics }: Props) {
             Verse sample
           </h2>
           <p className="text-foreground/70 mb-6">
-            Each topic contains verses like this — theme, Korean summary, reference, and
-            full KJV text.
+            Single verse example — theme, Korean summary, reference, and full KJV text.
           </p>
           <div className="max-w-2xl rounded-2xl border-2 border-[var(--accent)]/30 bg-[var(--accent-soft)]/40 p-6 shadow-inner">
             <p className="text-sm font-medium text-foreground/80">
